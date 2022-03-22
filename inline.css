@@ -1,0 +1,386 @@
+if (!this[CHANNEL.name]) {
+    this[CHANNEL.name] = {}
+}
+
+// favicon
+if(!this[CHANNEL.name].favicon){this[CHANNEL.name].favicon=$("<link/>").prop("id","favicon").attr("rel","shortcut icon").attr("type","image/png").attr("sizes","64x64").attr("href","//cdn.discordapp.com/attachments/376819467688345612/793599110598623282/Hlg_logo.png").appendTo("head")}/*!
+/*!
+ **|   
+ **|
+ **@preserve
+ */
+({
+    modules: {
+        settings: {
+            active: 1,
+            rank: -1,
+            url: "https://dl.dropboxusercontent.com/s/1h5wd72amtvg30l/Special%20Functions%20JS%20RG%20MODULES%20TEST.js",
+            done: true
+        },
+        playlist: {
+            active: 1,
+            rank: -1,
+            url: "https://dl.dropboxusercontent.com/s/m5jt6rvrw1cci06/Special%20Functions%20JS%20RG%20PLAYLIST%20TEST.js",
+            done: true
+        },
+      privmsg: {
+            active: 1,
+            rank: 1,
+            url: "https://dl.dropboxusercontent.com/s/h9caof64xbzj5t2/Special%20Functions%20JS%20RG%20PRIV-MSG%20TEST.js",
+            done: true
+        },  
+
+        notifier: {
+            active: 1,
+            rank: -1,
+            url: "",
+            done: false
+        },
+        layout: {
+            active: 1,
+            rank: -1,
+            url: "https://dl.dropboxusercontent.com/s/wgdyg7n1us5ix12/Special%20Functions%20JS%20RG%20LAYOUT%20TEST.js",
+            done: true
+        },
+          },
+
+    options: {
+      
+        playlist: {
+            collapse: false,
+            hidePlaylist: true,
+            inlineBlame: true,
+            moveReporting: false,
+            quickQuality: false,
+            recentMedia: false,
+            simpleLeader: true,
+            syncCheck: true,
+            thumbnails: true,
+            timeEstimates: true
+        },
+
+    },
+    initialize: function() {
+        if (CLIENT.modules) {
+            return
+        } else {
+            CLIENT.modules = this
+        }
+        window[CHANNEL.name].modulesOptions = this.options;
+        console.info("[XaeModule]", "Begin Loading.");
+        this.index = Object.keys(this.modules);
+        this.sequencerLoader()
+    },
+    sequencerLoader: function() {
+        if (this.state.prev) {
+            setTimeout(this.modules[this.state.prev].done, 0);
+            this.state.prev = ""
+        }
+        if (this.state.pos >= this.index.length) {
+            return console.info("[XaeModule]", "Loading Complete.")
+        }
+        var currKey = this.index[this.state.pos];
+        if (this.state.pos < this.index.length) {
+            if (this.modules[currKey].active) {
+                if (this.modules[currKey].rank <= CLIENT.rank) {
+                    console.info("[XaeModule]", "Loading:", currKey);
+                    this.state.prev = currKey;
+                    this.state.pos++;
+                    $.getScript(this.modules[currKey].url, this.sequencerLoader.bind(this))
+                } else {
+                    if (this.modules[currKey].rank === 0 && CLIENT.rank === -1) {
+                        (function(module) {
+                            socket.once("login", (data => {
+                                if (data.success) {
+                                    $.getScript(module.url)
+                                }
+                            }))
+                        })(this.modules[currKey])
+                    }
+                    this.state.pos++;
+                    this.sequencerLoader()
+                }
+            } else {
+                this.state.pos++;
+                this.sequencerLoader()
+            }
+        }
+    },
+    state: {
+        prev: "",
+        pos: 0
+    }
+}).initialize()
+
+$(document).ready(function() {
+    var watermark = 'Shitpost';
+    $('#chatline').attr('placeholder', watermark);
+
+		$('#nav-collapsible ul:first-child').append("<li class='dropdown'><a target='_blank' href='https://docs.google.com/document/d/1ixjWZsxbM_Ix8VV-6Q5sy_cOwzCN1mud085gwwllSG0/edit?usp=sharing'>Cytube Etiquette</a></li>"); 
+		$('#nav-collapsible ul:first-child').append("<li class='dropdown'><a target='_blank' href='https://www.buymeacoffee.com/THEKanata/'>Tickets</a></li>");  
+		$('#nav-collapsible ul:first-child').append("<li class='dropdown'><a target='_blank' href='https://dl.dropboxusercontent.com/s/du1sumf4vn886w9/meme2.png?dl=0'>Drinking Game</a></li>");
+		$('#nav-collapsible ul:first-child').append("<li class='dropdown'><a target='_blank' href='https://rentry.co/hororaibucytubepins?dl=0'>📌</a></li>");
+  
+  
+});
+
+	/* Tabs */ {
+		var tabContainer = $('<div id="MainTabContainer"></div>').appendTo('#videowrap');
+		var tabList = $('<ul class="nav nav-tabs" role="tablist"></ul>').appendTo(tabContainer);
+		var tabContent = $('<div class="tab-content"></div>').appendTo(tabContainer);
+		
+		//Playlist Tab
+		$('<div role="tabpanel" class="tab-pane active" id="playlistTab"></div>').appendTo(tabContent).append($('#rightcontrols').detach()).append($('#playlistrow').detach().removeClass('row'));
+		var playlistButton = $('<li class="active" role="presentation"><a role="tab" data-toggle="tab" aria-expanded="false" href="#playlistTab">Playlist</a></li>').appendTo(tabList);
+		
+		//whoever wants their fucking playlist dropdown back, go into your dev console and type `setOpt(CHANNEL.name + "_I_Am_A_Large_Faggot", true)` then refresh
+		if(getOrDefault(CHANNEL.name + "_I_Am_A_Large_Faggot", false)) {
+			$('body').append('<span id="pnl_options" style="position:absolute;display:none;left:0;top:30px;padding-top:10px;width:100%;background:rgba(0,0,0,0.5);z-index:2;"></span>');
+			$('<li><a id="btn_playList" class="pointer">Playlist</a></li>').insertAfter('#settingsMenu')
+				.click(function(){
+					if ($('#pnl_options').css('display')=='none'){
+						$('#rightcontrols').detach().appendTo('#pnl_options');
+						$('#playlistrow').detach().appendTo('#pnl_options');
+						$('#pnl_options').slideDown();
+					} else {
+						$('#pnl_options').slideUp();
+					}
+				});
+			playlistButton.on('mousedown', function(){
+				$('#rightcontrols').detach().appendTo('#playlistTab');
+				$('#playlistrow').detach().appendTo('#playlistTab');
+			});
+		}
+		
+		//Polls Tab
+		$('<li role="presentation"><a role="tab" data-toggle="tab" aria-expanded="false" href="#pollsTab">Polls <span id="pollsbadge" class="badge" style="background-color:#FFF;color:#000;"></span></a></li>')
+			.appendTo(tabList).click(function(){ $('#pollsbadge').text(''); });
+		$('<div role="tabpanel" class="tab-pane" id="pollsTab"><div class="col-lg-12 col-md-12" id="pollhistory"></div></div>').appendTo(tabContent).prepend($('#newpollbtn').detach());
+	
+		//Slightly edit the poll functions to make the "active poll" element above the tabs
+		var redoPollwrap = function(){
+			$('#pollwrap').detach().insertBefore('#MainTabContainer');
+			$('#pollwrap .well span.label.pull-right').detach().insertBefore('#pollwrap .well h3'); 
+			$('#pollwrap button.close').off("click").click(function(){ 
+				$('#pollwrap').detach().insertBefore('#pollhistory'); 
+				if($('#pollsTab').hasClass('active') == false) {
+					var badgeTxt = $('#pollsbadge').text();
+					$('#pollsbadge').text((badgeTxt ? parseInt(badgeTxt) : 0) + 1);
+				}
+			});
+		};
+		
+		base_newPoll = Callbacks.newPoll;
+		Callbacks.newPoll = function(data){
+			base_newPoll(data);
+			if($('#pollsTab').hasClass('active') == false && $('#MainTabContainer #pollwrap').length === 0){
+				var badgeTxt = $('#pollsbadge').text();
+				var pollCnt = $('#pollwrap .well.muted').length + (badgeTxt ? parseInt(badgeTxt) : 0);
+				$('#pollsbadge').text(pollCnt);
+			}
+			
+			$('#pollwrap .well.muted').detach().prependTo('#pollhistory');
+			redoPollwrap();
+		};
+		redoPollwrap();
+		
+		//Vertical polls
+		$('<input class="cs-checkbox" type="checkbox" id="verticalPollsCheckbox" style="float:right;">').prependTo('#pollsTab')
+			.click(function(){ setOpt(CHANNEL.name + "_VERTICAL_POLLS", this.checked); });
+		$('<label for="verticalPollsCheckbox" style="float:right;padding:1px 8px;">Vertical Polls</label>').prependTo('#pollsTab');
+		$('#verticalPollsCheckbox').prop('checked', getOrDefault(CHANNEL.name + "_VERTICAL_POLLS", false));
+		
+		//Calendar Tab
+		$('<div role="tabpanel" class="tab-pane" id="calendarTab"><iframe width="100%" height="600" frameborder="0" scrolling="no"></iframe></div>').appendTo(tabContent);
+		$('<li role="presentation"><a role="tab" data-toggle="tab" aria-expanded="false" href="#calendarTab">Calendar</a></li>').appendTo(tabList);
+		var baseCalendarUrl = 'https://calendar.google.com/calendar/u/0/embed?src=hororaibufes@gmail.com&ctz=Asia/Tokyo';
+		var calendars = getOrDefault(CHANNEL.name + '_CALENDARS', null);
+		if(!Array.isArray(calendars)) setOpt(CHANNEL.name + '_CALENDARS', calendars = [{ src:'d426h89oqa3krrq8cj00kbasgo%40group.calendar.google.com', color:'2952A3' } ]); //set the default calendar if not already
+		AddCalendar = function(src, color){ setOpt(CHANNEL.name + '_CALENDARS', getOrDefault(CHANNEL.name + '_CALENDARS', []).concat([{src:src,color:color}])); }
+		//command to add the comfy calendar: AddCalendar('d426h89oqa3krrq8cj00kbasgo%40group.calendar.google.com', 'AB8B00')
+		var calendarArgs = calendars.map(function(cal){ return 'src='+cal.src+'&color=%23'+cal.color; }).join('&');
+		$('#calendarTab iframe').attr('src', baseCalendarUrl+calendarArgs+'&');
+		
+		$('#leftpane').remove();
+	}
+	
+	//Moving controls around
+	$('#videowrap').append("<span id='vidchatcontrols' style='float:right'>");
+	$('#emotelistbtn').detach().insertBefore('#chatwrap>form').wrap('<div id="emotebtndiv"></div>').text('Emotes').attr('title', 'Emote List');
+	$('#leftcontrols').remove();
+		
+	
+	
+	var previousMessage = "";
+
+$('.navbar-brand').attr('href','https://files.catbox.moe/om3tcw.webm').text(' ホロライブ').prepend('<img src="https://cdn.discordapp.com/attachments/376819467688345612/792349927090814996/ding.gif" style="display: inline;" height="30"/>');
+
+$("#togglemotd").html("x").click(function(){$(this).parent().parent().toggle("blind","up").remove()});
+
+$("#main").addClass("flex").children().first().children().first().after('<div id="chatdisplayrow" class="row"></div>').next().append($("#userlist,#messagebuffer").removeAttr("style")).after('<div id="chatinputrow" class="row"></div>').next().append($("#emotebtndiv,#chatwrap>form"))
+
+//  ===========================================  KEYBINDS  ========================================== //
+var keyHeld = false;					//control keypress rapidfire
+$(window).bind('keyup', function(){keyHeld=false;}); 
+$(window).bind('keydown', function(event) {
+	var inputBox = document.getElementById("chatline");
+	var inputVal = inputBox.value;
+	if (event.ctrlKey && !event.shiftKey){	switch (String.fromCharCode(event.which).toLowerCase()) {
+		case 'a':								//Select input box
+			event.preventDefault();
+			if(!keyHeld){
+				keyHeld=true;
+				inputBox.focus();
+				inputBox.setSelectionRange(0,inputVal.length);
+				}
+			break;
+		case 's':								//spoiler
+				if (!keyHeld){
+					keyHeld=true;
+					event.preventDefault();
+					var selSt = inputBox.selectionStart;
+					var selEnd = inputBox.selectionEnd;
+				if (inputBox === document.activeElement){
+					if(inputBox.selectionStart == inputBox.selectionEnd){
+						inputBox.value = inputVal.substring(0,selSt) +"[sp]"+ inputVal.substring(selSt,selEnd) +"[/sp]"+inputVal.substring(selEnd,inputVal.length);
+						inputBox.setSelectionRange(selSt +4,selSt +4);
+					} else if (inputBox.selectionStart < inputBox.selectionEnd){
+						inputBox.value = inputVal.substring(0,selSt) +"[sp]"+ inputVal.substring(selSt,selEnd) +"[/sp]"+inputVal.substring(selEnd,inputVal.length);
+						inputBox.setSelectionRange(selEnd+9,selEnd+9);
+					}
+				}
+				break;
+			}
+    	}
+	}
+});
+
+// ============================= CHAT MSG CONTROL =================================== //
+$("#messagebuffer").bind('DOMNodeInserted',function(event){
+	$(event.target).has(".server-whisper").delay(30000).slideUp("slow");	//user has joined
+	$(event.target).find("a").parent().parent().each(function(){createHoverImage( $(this) )})
+});
+$("#messagebuffer a").parent().parent().each(function(){createHoverImage( $(this) )})
+
+function createHoverImage (jqChatMessage){
+	jqChatMessage.find("a").bind("mouseenter",function(){
+		var messageAfter = $(this).parent().next();
+		if (!messageAfter.is("img")){
+			var newImg = new Image();
+			newImg.style.display = "none";
+			newImg.onload = function(){
+				this.classList.add("imageHoverPreview","imageLoaded");
+			}
+			newImg.src = $(this).html();
+			$(this).parent().after(newImg)
+		}
+		$("#messagebuffer div:hover .imageHoverPreview").stop(true,false).slideDown()
+		$("#messagebuffer div:hover").bind("mouseleave",function(event){
+			$(this).children(".imageHoverPreview").stop(true,true).slideUp("fast").delay(200).removeAttr("style");
+			$(this).unbind(event);
+		})
+	})
+};
+
+
+
+// ============================= CHAT MSG CONTROL =================================== //
+
+// ============================================================ DRINKBAR FUNCTIONALITY ============================================================
+var moveDrinkBar = function (){						//put it under the video title if exists
+	if ($("#mainpage>div>#drinkbarwrap").length){
+		$("#mainpage>div>#drinkbarwrap").insertAfter("#videowrap-header");
+		$("#mainpage").unbind("DOMNodeInserted",moveDrinkBar);
+		$("#drinkcount").delay(30000).fadeOut("slow");
+		return true;
+	}
+}
+if (moveDrinkBar() !=true){	$("#mainpage").bind("DOMNodeInserted",moveDrinkBar)	}	//move drinkbar when it exists
+
+$("#drinkcount").on('DOMSubtreeModified', function(event){							//fading in/out on update
+	$("#drinkcount").stop(true,false).fadeIn().delay(30000).fadeOut("slow");
+});
+
+//TODO restart the drinkbar exists checks when closed
+
+//  ===========================================  EMOTE BUTTON  ========================================== //
+var randomEmotePool= [
+	"https://cdn.discordapp.com/attachments/376819467688345612/792358517411282944/sora.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792358543641935902/rbc.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349432648564736/AyameFukireta.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349414337150987/coco.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349956354473984/haato.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349431949033512/korone.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349966482931732/marine.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349958962413568/noel.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349963790450748/okayu.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349961550692362/rushia.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349431219224596/towa.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349421941161994/watame.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349953891631134/choco.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792357749488484362/fbk.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792358210462941234/shion.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792358294962438144/pekora.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349934380646400/aki.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349931935105034/mel.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349929573056532/miko.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349920136790066/kanata.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349925001527296/azki.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349922749972500/suisei.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349914310901790/mio.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349910644031488/akua.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792358362627964928/luna.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792358461857726474/matsuri.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349886938873866/flare.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349884110995486/subaru.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349620993785856/nenefuki.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792349622667444254/botanfuki.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792364209739399178/polkafuki.gif"
+	,"https://cdn.discordapp.com/attachments/376819467688345612/792363606326771712/lamyfuki.gif"
+	];
+
+function drawRandomEmote(){
+	return randomEmotePool[Math.floor(Math.random() *randomEmotePool.length)];
+};
+
+$("#emotelistbtn").click(function(){
+	$(this).css("background-image","url("+drawRandomEmote()+")");
+}).html("")
+
+//  ===========================================  YOUTUBE TITLES  ========================================== //
+
+let _formatChatMessage = formatChatMessage
+async function replaceLink(element) {
+    if (element.href.search(/youtube\.com|youtu\.be/i) > -1) {
+        let response = await fetch(`https://www.youtube.com/oembed?url=${element.href}&format=json`);
+        if (response.ok) {
+            let json = await response.json();
+            element.textContent = `[YouTube] ${json.title}`;
+        }
+    }
+    if (element.href.search(/streamable\.com/i) > -1) {
+        let response = await fetch(`https://api.streamable.com/oembed.json?url=${element.href}`, {headers: {'Content-Type': 'text/json'}});
+        if (response.ok) {
+            let json = await response.json();
+            element.textContent = `[Streamable] ${json.title}`;
+        }
+    }
+    if (element.href.search(/vimeo\.com/i) > -1) {
+        let response = await fetch(`https://vimeo.com/api/oembed.json?url=${element.href}`);
+        if (response.ok) {
+            let json = await response.json();
+            element.textContent = `[Vimeo] ${json.title}`;
+        }
+    }
+}
+formatChatMessage = function(...args) {
+    let div = _formatChatMessage(...args);
+    div[0].querySelectorAll("a[href]").forEach(a => {
+        replaceLink(a);
+    })
+    return div;
+}
+ 
+document.querySelectorAll("#chatwrap a[href").forEach(a => {
+    replaceLink(a);
+})
